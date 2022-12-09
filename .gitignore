@@ -9,7 +9,7 @@ Allstate*
 # *.jar
 
 # zip files
-*.zip
+# *.zip
   
 # .tfstate files
 *.tfstate
