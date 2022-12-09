@@ -5,6 +5,7 @@ In this lab you will set up the AWS CLI so that you can manage AWS infrastructur
 * Log into the AWS console  https://console.aws.amazon.com/console/home# either using your own account or one your instructor will supply. To set up CLI access you need quite high level access in your role, and Terraform will obviously need permissions to create the various resources you need.
 * Click on your username in the top right corner of the screen to expose the drop down, then select the "Security Credentials" option.
 * You cannot access the values of an existing access key directly, if there is one there then just create a second access key by clicking the "Create access key" button (you can have a maximum of 2 access keys per user account).
+* **IMPORTANT** There is a compatibility issue between Terraform and AWS that shows up if your secret access key includes strange characters (in particular, ``+``, ``\`` and ``/`` - see https://github.com/hashicorp/terraform/issues/2972). When you copy your secret access key, if it has any non-alphanumeric characters, then delete it and regenerate until you get one without special characters.
 * Make sure you copy or save the access key details in a secure location.
 ## 2. Configure the AWS CLI
 * Open up any windows command line terminal (PowerShell, Git Bash, cmd or the terminal in VS Code - NOT Ubuntu)

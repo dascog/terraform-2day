@@ -11,7 +11,7 @@ Your instructor will provide you with a link. Put it somewhere accessible on you
 * If you are working from a command line, you don't need to do this.
 ## 4. Verify that terraform is installed
 * On the command line run the command ``terraform -v``. 
-* You should get the response ``Terraform v1.1.6 on windows_amd64``
+* You should get the response ``Terraform v1.3.5 on windows_amd64``
 ## 5. Initialize Terraform in the current directory
 * On the command line type `terraform init`. 
 * You should see a green message telling you your initialization has been successful.
