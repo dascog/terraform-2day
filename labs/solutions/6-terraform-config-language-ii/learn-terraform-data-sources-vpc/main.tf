@@ -1,10 +1,5 @@
-terraform {
-  required_providers {
-    aws = {
-      source = "hashicorp/aws"
-    }
-  }
-}
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
 
 provider "aws" {
   region = var.aws_region
@@ -12,13 +7,19 @@ provider "aws" {
 
 data "aws_availability_zones" "available" {
   state = "available"
+
+  filter {
+    name   = "zone-type"
+    values = ["availability-zone"]
+  }
 }
 
-data "aws_region" "current" {}
+data "aws_region" "current" { }
+
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "2.64.0"
+  version = "4.0.2"
 
   cidr = var.vpc_cidr_block
 
@@ -28,11 +29,13 @@ module "vpc" {
 
   enable_nat_gateway = true
   enable_vpn_gateway = false
+
+  map_public_ip_on_launch = false
 }
 
 module "app_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
-  version = "3.17.0"
+  version = "4.9.0"
 
   name        = "web-server-sg"
   description = "Security group for web-servers with HTTP ports open within VPC"
@@ -43,7 +46,7 @@ module "app_security_group" {
 
 module "lb_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
-  version = "3.17.0"
+  version = "4.9.0"
 
   name        = "lb-sg-project-alpha-dev"
   description = "Security group for load balancer with HTTP ports open within VPC"

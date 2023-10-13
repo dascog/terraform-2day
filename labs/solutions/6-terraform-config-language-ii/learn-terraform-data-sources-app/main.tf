@@ -1,21 +1,27 @@
-terraform {
-  required_providers {
-    aws = {
-      source = "hashicorp/aws"
-    }
-  }
-}
-
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
 data "terraform_remote_state" "vpc" {
   backend = "local"
+
   config = {
     path = "../learn-terraform-data-sources-vpc/terraform.tfstate"
-   }
+  }
 }
 
 provider "aws" {
   region = data.terraform_remote_state.vpc.outputs.aws_region
 }
+
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
 
 resource "random_string" "lb_id" {
   length  = 3
@@ -24,7 +30,7 @@ resource "random_string" "lb_id" {
 
 module "elb_http" {
   source  = "terraform-aws-modules/elb/aws"
-  version = "2.4.0"
+  version = "4.0.0"
 
   # Ensure load balancer name is unique
   name = "lb-${random_string.lb_id.result}-tutorial-example"
@@ -53,19 +59,9 @@ module "elb_http" {
   }
 }
 
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
-  }
-}
-
-
 resource "aws_instance" "app" {
   count = var.instances_per_subnet * length(data.terraform_remote_state.vpc.outputs.private_subnet_ids)
+
   ami = data.aws_ami.amazon_linux.id
 
   instance_type = var.instance_type

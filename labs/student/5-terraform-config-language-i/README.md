@@ -13,6 +13,7 @@ This exercise combines a series of Hashcorp Terraform tutorials that cover some 
 - Remember to follow the instructions for ``Terraform Community Edition``
 
 ## 3. Advanced! Manage Similar Resources with For Each (45mins)
-- this is quite an advanced tutorial - it doesn't describe very clearly *how* to separate the EC2 instances out into a separate module. It is worth trying it yourself from the tutorial description, and then cloning the solution repository to compare your files if you are not able to get it working successfully.
+- This tutorial includes some quite advanced features.
+- Take your time to understand the steps, and use the AWS console to verify the changes you make.
 - https://learn.hashicorp.com/tutorials/terraform/for-each?in=terraform/configuration-language
 - Once again you need to edit the ``terraform.tf`` file and change line 15 to ``required_version = ">= 1.2"``

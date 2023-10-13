@@ -1,9 +1,19 @@
 # Exercise 6 The Terraform Configuration Language II
-This exercise combines a series of hashicorp terraform tutorials that cover some of the configuration language features we have learned so far.
+This exercise combines a series of Hashicorp Terraform tutorials that cover some of the configuration language features we have learned so far.
 ## 1. Query Data Sources (20-30min)
+- This tutorial shows how to set up a Terraform configuration to query data sources for AZ, AMIs, and other variables that make a module generalizable.
 - https://learn.hashicorp.com/tutorials/terraform/data-sources
+- Ensure you follow the instructions for `Terraform Community Edition`.
 - You will need to change the required_version of Terraform in this deployment. 
   - Edit the ``terraform.tf`` file and change line 15 to read: ``required_version = ">= 1.2"``
+- You will also need to update the version for the `vpc` module as follows:
+  - Edit the `main.tf` file. 
+  - Find the `module "vpc"` block.
+  - Change the `version` argument to match:
+
+  ```yaml
+  version = "4.0.2"
+  ```
 
 ## 2. Protect Sensitive Input Variables (20-30mins)
 - In the following tutorial the "Set values with environment variables" section requires setting environment variables. On your VMs this is best done in a windows PowerShell. Using the VSCode desktop, open a PowerShell by clicking on the down arrow beside the + on the top right of your bash terminal. Then following the Windows PowerShell instructions in the tutorial
