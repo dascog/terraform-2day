@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 variable "region" {
   description = "The region Terraform deploys your instances"
   type        = string
@@ -81,6 +84,7 @@ variable "green_instance_count" {
   type        = number
   default     = 2
 }
+
 locals {
   traffic_dist_map = {
     blue = {
