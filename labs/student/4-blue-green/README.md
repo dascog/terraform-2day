@@ -13,6 +13,6 @@ This lab follows exactly one of the Terraform tutorials, however we note some mi
 * If it's not already visible, open the Terminals frame using `CTRL '` or View -> Terminal.
 * On the top-right of the Terminal frame the kind of shell you are using is displayed. If it is anything other than `bash`, click on the down arrow by the `+` sign and select the Git Bash option. 
 ## 4. Follow the instructions in the Tutorial
-* All the instructions *should* execute as expected with the exception of the following corrections:
+* All the instructions *should* execute as expected.
 ## 8. Remember to clean up your resources before finishing
 * In this case you need to be careful to do a `terraform destroy` using the last `-var` argument you used for `terraform apply`.
