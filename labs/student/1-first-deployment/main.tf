@@ -17,7 +17,7 @@ resource "docker_image" "whoami" {
 }
 
 resource "docker_container" "whoami" {
-  image = docker_image.whoami.latest
+  image = docker_image.whoami.image_id
   name  = "tutorial"
   ports {
     internal = 80
