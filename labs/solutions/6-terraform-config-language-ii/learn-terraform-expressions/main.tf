@@ -1,30 +1,24 @@
-terraform {
-  required_version = ">= 0.13.0"
-}
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
 
 provider "aws" {
   region = var.aws_region
-}
 
-resource "random_id" "id" {
-  byte_length = 8
-}
-
-locals {
-  name  = (var.name != "" ? var.name : random_id.id.hex)
-  owner = var.team
-  common_tags = {
-    Owner = local.owner
-    Name  = local.name
+  default_tags {
+    tags = {
+      hashicorp-learn = "expressions"
+    }
   }
 }
+
+
 
 data "aws_ami" "ubuntu" {
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
   }
 
   filter {
@@ -43,13 +37,13 @@ resource "aws_vpc" "my_vpc" {
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.my_vpc.id
-  tags   = local.common_tags
+  tags                 = local.common_tags
 }
 
 resource "aws_subnet" "subnet_public" {
   vpc_id     = aws_vpc.my_vpc.id
   cidr_block = var.cidr_subnet
-  tags       = local.common_tags
+  tags                 = local.common_tags
 }
 
 resource "aws_route_table" "rtb_public" {
@@ -59,7 +53,7 @@ resource "aws_route_table" "rtb_public" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
   }
-  tags   = local.common_tags
+  tags                 = local.common_tags
 }
 
 resource "aws_route_table_association" "rta_subnet_public" {
@@ -77,7 +71,6 @@ resource "aws_elb" "learn" {
     lb_protocol       = "http"
   }
 
-
   health_check {
     healthy_threshold   = 2
     unhealthy_threshold = 2
@@ -90,15 +83,28 @@ resource "aws_elb" "learn" {
   idle_timeout                = 400
   connection_draining         = true
   connection_draining_timeout = 400
-  tags   = local.common_tags
+  tags                 = local.common_tags
 }
 
 
 resource "aws_instance" "ubuntu" {
-  count = (var.high_availability == true ? 3 : 1)
+  count                       = (var.high_availability == true ? 3 : 1)
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t2.micro"
   associate_public_ip_address = (count.index == 0 ? true : false)
   subnet_id                   = aws_subnet.subnet_public.id
-  tags   = merge(local.common_tags)
+  tags                        = merge(local.common_tags)
+}
+
+resource "random_id" "id" {
+  byte_length = 8
+}
+
+locals {
+  name  = (var.name != "" ? var.name : random_id.id.hex)
+  owner = var.team
+  common_tags = {
+    Owner = local.owner
+    Name  = local.name
+  }
 }

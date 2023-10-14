@@ -38,15 +38,86 @@ This exercise combines a series of Hashicorp Terraform tutorials that cover some
   - Edit the ``terraform.tf`` file and change line 20 to read: ``required_version = ">= 1.2"``
 
 ## 6. Build and Use a Local Module (30mins)
-- The git repository for this tutorial actually has all the solution code already entered, so you just need to go through an verify you understand each step. 
-  - The tutorial is best done by *renaming* the cloned `modules` directory to `modules-soln` then going through the steps to create the module yourself.
-- Note that you must set your bucket name in the `main.tf` `website_s3_bucket` block to a *unique*, valid S3 bucket, you will need to change the code at this point. 
+- The git repository for this tutorial actually has all the solution code already entered, so you just need to go through an verify you understand each step.
+- The supplied code for the `aws-s3-static-website` module does not account for recent updates to S3 security policies and will fail to build. Please replace the contents of `modules\aws-s3-static-website-bucket\main.tf` with the following:
+
+``` title="main.tf"
+resource "aws_s3_bucket" "s3_bucket" {
+  bucket = var.bucket_name
+
+  tags = var.tags
+}
+
+resource "aws_s3_bucket_website_configuration" "s3_bucket" {
+  bucket = aws_s3_bucket.s3_bucket.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "error.html"
+  }
+}
+resource "aws_s3_bucket_ownership_controls" "s3_bucket" {
+  bucket = aws_s3_bucket.s3_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "s3_bucket" {
+  bucket = aws_s3_bucket.s3_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_acl" "s3_bucket" {
+  bucket = aws_s3_bucket.s3_bucket.id
+
+  acl = "public-read"
+  depends_on = [
+    aws_s3_bucket_ownership_controls.s3_bucket,
+    aws_s3_bucket_public_access_block.s3_bucket,
+  ]
+}
+
+resource "aws_s3_bucket_policy" "s3_bucket" {
+  bucket = aws_s3_bucket.s3_bucket.id
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": [
+                "${aws_s3_bucket.s3_bucket.arn}",
+                "${aws_s3_bucket.s3_bucket.arn}/*"
+            ]
+        }
+    ]
+  })
+}
+```
+
+- Note that you must set the bucket name in the `main.tf` `website_s3_bucket` block to a globally *unique*, valid S3 bucket name. You will need to edit the `website_s3_bucket` module block and change the `bucket_name` argument accordingly.
+ 
 - In your Git bash shell on your Windows VM you can verify your website using the command:
   ``start chrome https://$(terraform output -raw website_bucket_name).s3-us-west-2.amazonaws.com/index.html`` 
   or
   ``curl https://$(terraform output -raw website_bucket_name).s3-us-west-2.amazonaws.com/index.html`` 
   on any other platform.
 - https://learn.hashicorp.com/tutorials/terraform/module-create?in=terraform/modules
+- You need to update some of the versions in the code. 
+  - In the `main.tf` file, change the `version` in the `required_providers` block to `5.5.0`.
+  - Then change the `version` argument in the `vpc` module block to be `5.1.2`.
+  - And finally change the `version` argument in the `ec2_instances` module block to be `5.5.0`.
+- **Please follow the cleanup instructions carefully**. This will save me manually deleting a whole lot of s3 buckets!
 
 ## 7. Refactor a Monolithic Terraform Configuration (20mins)
 - This tutorial offers you an interactive terminal, if it does not launch just use your normal VM environment.
@@ -63,7 +134,28 @@ This exercise combines a series of Hashicorp Terraform tutorials that cover some
 
 ## 10. Create Dynamic Expressions (20mins)
 - https://learn.hashicorp.com/tutorials/terraform/expressions?in=terraform/configuration-language 
-- For this lab you will also need to edit the ``required_version`` in the ``terraform.tf`` file as we have seen before.
+- The AMI image filters used the `aws_ami` data source is no longer supported.
+  - In the `main.tf` file, locate the `aws_ami` data source and replace the block with the following:
+
+```
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  owners = ["099720109477"] # Canonical
+}
+```
+
+- You will need to change the required_version of Terraform in this deployment. 
+  - Edit the ``terraform.tf`` file and change line 20 to read: ``required_version = ">= 1.2"``
 
 ## 11. Perform Dynamic Operations with Functions (15mins)
 - With this (and other) tutorials that produce an example website you can use to test you deployment, note that it can take some time for your AWS resources to spin up. If you open a browser at the provided link, it will usually refresh after a while and show your deployed site.
