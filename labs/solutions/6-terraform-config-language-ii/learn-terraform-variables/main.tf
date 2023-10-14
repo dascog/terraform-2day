@@ -1,10 +1,5 @@
-terraform {
-  required_providers {
-    aws = {
-      source = "hashicorp/aws"
-    }
-  }
-}
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
 
 provider "aws" {
   region  = var.aws_region
@@ -16,7 +11,7 @@ data "aws_availability_zones" "available" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "2.64.0"
+  version = "3.19.0"
 
   cidr = var.vpc_cidr_block
 
@@ -32,7 +27,7 @@ module "vpc" {
 
 module "app_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
-  version = "3.17.0"
+  version = "4.17.0"
 
   name        = "web-sg-${var.resource_tags["project"]}-${var.resource_tags["environment"]}"
   description = "Security group for web-servers with HTTP ports open within VPC"
@@ -40,12 +35,15 @@ module "app_security_group" {
 
   ingress_cidr_blocks = module.vpc.public_subnets_cidr_blocks
 
-  tags = var.resource_tags
+  tags = {
+    project     = "project-alpha",
+    environment = "dev"
+  }
 }
 
 module "lb_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
-  version = "3.17.0"
+  version = "4.17.0"
 
   name        = "lb-sg-${var.resource_tags["project"]}-${var.resource_tags["environment"]}"
   description = "Security group for load balancer with HTTP ports open within VPC"
@@ -53,7 +51,10 @@ module "lb_security_group" {
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
 
-  tags = var.resource_tags
+  tags = {
+    project     = "project-alpha",
+    environment = "dev"
+  }
 }
 
 resource "random_string" "lb_id" {
@@ -63,14 +64,13 @@ resource "random_string" "lb_id" {
 
 module "elb_http" {
   source  = "terraform-aws-modules/elb/aws"
-  version = "2.4.0"
+  version = "4.0.1"
 
   # Ensure load balancer name is unique
   name = "lb-${random_string.lb_id.result}-${var.resource_tags["project"]}-${var.resource_tags["environment"]}"
-
   internal = false
 
-  security_groups = [module.lb_security_group.this_security_group_id]
+  security_groups = [module.lb_security_group.security_group_id]
   subnets         = module.vpc.public_subnets
 
   number_of_instances = length(module.ec2_instances.instance_ids)
@@ -91,16 +91,24 @@ module "elb_http" {
     timeout             = 5
   }
 
-  tags = var.resource_tags
+  tags = {
+    project     = "project-alpha",
+    environment = "dev"
+  }
 }
 
 module "ec2_instances" {
   source = "./modules/aws-instance"
 
+  depends_on = [module.vpc]
+
   instance_count     = var.instance_count
   instance_type      = var.ec2_instance_type
   subnet_ids         = module.vpc.private_subnets[*]
-  security_group_ids = [module.app_security_group.this_security_group_id]
+  security_group_ids = [module.app_security_group.security_group_id]
 
-  tags = var.resource_tags
+  tags = {
+    project     = "project-alpha",
+    environment = "dev"
+  }
 }

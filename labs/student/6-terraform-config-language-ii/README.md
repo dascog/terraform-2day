@@ -32,13 +32,15 @@ This exercise combines a series of Hashicorp Terraform tutorials that cover some
 - For this lab you will also need to edit the ``required_version`` in the ``terraform.tf`` file as we have seen before.
 
 ## 5. Customize Terraform Configuration with Variables (20mins)
+- This is an excellent lab that will introduce you to all aspects of using variables in a terraform configuration.
 - https://learn.hashicorp.com/tutorials/terraform/variables?in=terraform/configuration-language
 - You will need to change the required_version of Terraform in this deployment. 
   - Edit the ``terraform.tf`` file and change line 20 to read: ``required_version = ">= 1.2"``
 
-## 6. Build and Use a Local Module (15mins)
-- the git repository for this tutorial actually has all the solution code already entered, so you just need to go through an verify you understand each step. 
-- Note that you must set your bucket name to a *unique*, valid S3 bucket, you will need to change the code at this point. 
+## 6. Build and Use a Local Module (30mins)
+- The git repository for this tutorial actually has all the solution code already entered, so you just need to go through an verify you understand each step. 
+  - The tutorial is best done by *renaming* the cloned `modules` directory to `modules-soln` then going through the steps to create the module yourself.
+- Note that you must set your bucket name in the `main.tf` `website_s3_bucket` block to a *unique*, valid S3 bucket, you will need to change the code at this point. 
 - In your Git bash shell on your Windows VM you can verify your website using the command:
   ``start chrome https://$(terraform output -raw website_bucket_name).s3-us-west-2.amazonaws.com/index.html`` 
   or

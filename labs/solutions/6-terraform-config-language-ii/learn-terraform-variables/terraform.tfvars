@@ -1,6 +1,6 @@
 resource_tags = {
-  project     = "new-project",
-  environment = "test",
+  project     = "project-alpha",
+  environment = "dev",
   owner       = "me@example.com"
 }
 

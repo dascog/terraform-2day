@@ -1,19 +1,25 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Variable declarations
 variable "aws_region" {
   description = "AWS region"
   type        = string
   default     = "us-west-2"
 }
+
 variable "vpc_cidr_block" {
   description = "CIDR block for VPC"
   type        = string
   default     = "10.0.0.0/16"
 }
+
 variable "instance_count" {
   description = "Number of instances to provision."
   type        = number
   default     = 2
 }
+
 variable "enable_vpn_gateway" {
   description = "Enable a VPN gateway in your VPC."
   type        = bool
@@ -60,14 +66,14 @@ variable "private_subnet_cidr_blocks" {
     "10.0.108.0/24",
   ]
 }
+
 variable "resource_tags" {
   description = "Tags to set for all resources"
   type        = map(string)
   default     = {
-    project     = "my-project",
+    project     = "project-alpha",
     environment = "dev"
   }
-
   validation {
     condition     = length(var.resource_tags["project"]) <= 16 && length(regexall("[^a-zA-Z0-9-]", var.resource_tags["project"])) == 0
     error_message = "The project tag must be no more than 16 characters, and only contain letters, numbers, and hyphens."
@@ -78,7 +84,6 @@ variable "resource_tags" {
     error_message = "The environment tag must be no more than 8 characters, and only contain letters, numbers, and hyphens."
   }
 }
-
 variable "ec2_instance_type" {
   description = "AWS EC2 instance type."
   type        = string
