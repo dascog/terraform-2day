@@ -22,7 +22,10 @@ This exercise combines a series of Hashicorp Terraform tutorials that cover some
   - Edit the ``terraform.tf`` file and change line 15 to read: ``required_version = ">= 1.2"``
 
 ## 3. Output Data from Terraform (20mins)
+- In this tutorial you will enable output from a deployment and see the capability and limits of redacting sensitive outputs.
 - https://learn.hashicorp.com/tutorials/terraform/outputs
+- You will need to change the required_version of Terraform in this deployment. 
+  - Edit the ``terraform.tf`` file and change line 21 to read: ``required_version = ">= 1.2"``
 
 ## 4. Simplify Terraform Configuration with Locals
 - https://learn.hashicorp.com/tutorials/terraform/locals?in=terraform/configuration-language
@@ -30,6 +33,8 @@ This exercise combines a series of Hashicorp Terraform tutorials that cover some
 
 ## 5. Customize Terraform Configuration with Variables (20mins)
 - https://learn.hashicorp.com/tutorials/terraform/variables?in=terraform/configuration-language
+- You will need to change the required_version of Terraform in this deployment. 
+  - Edit the ``terraform.tf`` file and change line 20 to read: ``required_version = ">= 1.2"``
 
 ## 6. Build and Use a Local Module (15mins)
 - the git repository for this tutorial actually has all the solution code already entered, so you just need to go through an verify you understand each step. 
