@@ -1,5 +1,8 @@
 # Exercise 6 The Terraform Configuration Language II
 This exercise combines a series of Hashicorp Terraform tutorials that cover some of the configuration language features we have learned so far.
+
+**NOTE**: Many of the Hashicorp tutorials will not run with current versions of Terraform or the AWS providers. Your trainer has selected a number of labs from the ones below and detailed changes required to get them working. The other labs are included for your reference and may be instructive - however there is no guarantee they will work without editing. You have been warned!
+
 ## 1. Query Data Sources (20-30min)
 - This tutorial shows how to set up a Terraform configuration to query data sources for AZ, AMIs, and other variables that make a module generalizable.
 - https://learn.hashicorp.com/tutorials/terraform/data-sources
@@ -160,5 +163,40 @@ data "aws_ami" "ubuntu" {
 ## 11. Perform Dynamic Operations with Functions (15mins)
 - With this (and other) tutorials that produce an example website you can use to test you deployment, note that it can take some time for your AWS resources to spin up. If you open a browser at the provided link, it will usually refresh after a while and show your deployed site.
 - In the following tutorial, the section on SSH keys for ``Mac or Linux command-line`` can be followed using a Git Bash shell. There is no need to install PuTTY.
+
 - https://learn.hashicorp.com/tutorials/terraform/functions?in=terraform/configuration-language
-- For this lab you will also need to edit the ``required_version`` in the ``terraform.tf`` file as we have seen before.
+
+- The AMI image filters used the `aws_ami` data source is no longer supported.
+  - In the `main.tf` file, locate the `aws_ami` data source and replace the block with the following:
+
+```
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  owners = ["099720109477"] # Canonical
+}
+```
+- The AMIs used in the **Use lookup function to select AMI** are also no longer current. Replace the suggested new `aws_amis` variable block in `variables.tf` with the following:
+
+```
+variable "aws_amis" {
+  type = map
+  default = {
+    "us-east-1" = "ami-053b0d53c279acc90"
+    "us-west-2" = "ami-03f65b8614a860c29"
+    "us-east-2" = "ami-024e6efaf93d85776"
+  }
+}
+```
+
+- You will need to change the required_version of Terraform in this deployment. 
+  - Edit the ``terraform.tf`` file and change line 20 to read: ``required_version = ">= 1.2"``

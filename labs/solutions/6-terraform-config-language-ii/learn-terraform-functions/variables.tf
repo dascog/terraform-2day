@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 variable "cidr_vpc" {
   description = "CIDR block for the VPC"
   default     = "10.1.0.0/16"
@@ -31,8 +34,8 @@ variable "user_department" {
 variable "aws_amis" {
   type = map
   default = {
-    "us-east-1" = "ami-0739f8cdb239fe9ae"
-    "us-west-2" = "ami-008b09448b998a562"
-    "us-east-2" = "ami-0ebc8f6f580a04647"
+    "us-east-1" = "ami-053b0d53c279acc90"
+    "us-west-2" = "ami-03f65b8614a860c29"
+    "us-east-2" = "ami-024e6efaf93d85776"
   }
 }
