@@ -157,6 +157,13 @@ data "aws_ami" "ubuntu" {
 }
 ```
 
+- In a class setting you will encounter a conflict when creating multiple load balancers with the same name. 
+  - Edit the `aws_elb` resource block in `main.tf` and add a unique string to the end of the `name` argument:
+
+```
+  name = "Learn-ELB-<YOUR-INITIALS>
+```
+
 - You will need to change the required_version of Terraform in this deployment. 
   - Edit the ``terraform.tf`` file and change line 20 to read: ``required_version = ">= 1.2"``
 

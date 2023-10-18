@@ -7,7 +7,7 @@ This lab follows exactly one of the Terraform tutorials, however we note some mi
 * If you are using windows explorer, right click in the directory and select "Git Bash Here" - this will open a Bash shell which you can use for the `git clone` command.
 * Once the repository is cloned cd in to the repository directory and type the command `code .` to open VS Code in the current directory.
 ## 2. Update the required_version
-* Open the `versions.tf` file in VS Code and update the `required version` statement to `required version = "~> 1.5"`.
+* Open the `terraform.tf` file in VS Code and update the `required version` statement to `required version = "~> 1.5"`.
 ## 3. Open up a Git bash terminal in VS Code 
 * Some of the tutorial instructions require a linux command line. 
 * If it's not already visible, open the Terminals frame using `CTRL '` or View -> Terminal.
