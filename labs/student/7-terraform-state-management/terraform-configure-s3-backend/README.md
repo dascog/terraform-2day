@@ -74,7 +74,7 @@ terraform {
     bucket         = "<your_bucket_name>"
     key            = "terraform.tfstate"
     region         = "<your_aws_region>"
-    DynamoDB_table = "<your_dynamo_dbtable_name>"
+    dynamodb_table = "<your_dynamo_dbtable_name>"
   }
   required_providers {
     aws = {
